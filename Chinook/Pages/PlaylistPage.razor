@@ -1,6 +1,7 @@
 ﻿@page "/playlist/{PlaylistId:long}"
 @attribute [Authorize]
 
+@using Chinook.Infrastructure.Services.PlaylistService;
 @using Chinook.Models
 @using Microsoft.EntityFrameworkCore
 @using System.Security.Claims;
@@ -62,36 +63,22 @@ else
 
 @code {
     [Parameter] public long PlaylistId { get; set; }
-    [Inject] IDbContextFactory<ChinookContext> DbFactory { get; set; }
+   
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
     private Chinook.ClientModels.Playlist Playlist;
     private string CurrentUserId;
     private string InfoMessage;
+    @inject IPlaylistService _PlaylistService;
 
     protected override async Task OnInitializedAsync()
     {
         CurrentUserId = await GetUserId();
 
         await InvokeAsync(StateHasChanged);
-        var DbContext = await DbFactory.CreateDbContextAsync();
+      
 
-        Playlist = DbContext.Playlists
-            .Include(a => a.Tracks).ThenInclude(a => a.Album).ThenInclude(a => a.Artist)
-            .Where(p => p.PlaylistId == PlaylistId)
-            .Select(p => new ClientModels.Playlist()
-                {
-                    Name = p.Name,
-                    Tracks = p.Tracks.Select(t => new ClientModels.PlaylistTrack()
-                    {
-                        AlbumTitle = t.Album.Title,
-                        ArtistName = t.Album.Artist.Name,
-                        TrackId = t.TrackId,
-                        TrackName = t.Name,
-                        IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == CurrentUserId && up.Playlist.Name == "Favorites")).Any()
-                    }).ToList()
-                })
-            .FirstOrDefault();
+        Playlist = await _PlaylistService.GetPlaylistById((int)PlaylistId, CurrentUserId);
     }
 
     private async Task<string> GetUserId()

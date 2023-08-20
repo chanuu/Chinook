@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Chinook.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Chinook.Domain.Abstraction.Common;
 
 namespace Chinook;
 
-public partial class ChinookContext : IdentityDbContext<ChinookUser>
+public partial class ChinookContext : IdentityDbContext<ChinookUser>, IUnitOfWork
 {
     public ChinookContext()
     {
@@ -29,6 +31,11 @@ public partial class ChinookContext : IdentityDbContext<ChinookUser>
     public virtual DbSet<Playlist> Playlists { get; set; } = null!;
     public virtual DbSet<Track> Tracks { get; set; } = null!;
     public virtual DbSet<UserPlaylist> UserPlaylists { get; set; } = null!;
+
+    public Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

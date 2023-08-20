@@ -12,6 +12,8 @@ namespace Chinook.Infrastructure.Services.ArtistService
     {
         Task<List<Artist>> GetArtist();
 
+        Task<List<Artist>> SearchArtistByArtist(string key);
+
         Task<List<Album>> GetAlbumByArtist(int ArtistId);
 
         Task<List<PlaylistTrack>> GetTracksByArtist(long ArtistId, string currentUserId);

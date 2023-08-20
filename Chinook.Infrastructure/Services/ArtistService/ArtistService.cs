@@ -51,5 +51,10 @@ namespace Chinook.Infrastructure.Services.ArtistService
            })
            .ToList();
         }
+
+        public async Task<List<Artist>> SearchArtistByArtist(string key)
+        {
+         return  await  _ArtistRepository.GetAllByNameAsync(key);
+        }
     }
 }

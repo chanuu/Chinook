@@ -14,6 +14,8 @@ namespace Chinook.Domain.Abstraction.Repositories
 
         Task<List<Artist>> GetAllAsync();
 
+        Task<List<Artist>> GetAllByNameAsync(string key);
+
         Task<List<Track>> GetAllTracksAsync(long artistId);
 
 

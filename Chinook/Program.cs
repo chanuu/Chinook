@@ -3,6 +3,8 @@ using Chinook.Areas.Identity;
 using Chinook.Domain.Abstraction.Common;
 using Chinook.Domain.Abstraction.Repositories;
 using Chinook.Infrastructure.Repositores;
+using Chinook.Infrastructure.Services.ArtistService;
+using Chinook.Infrastructure.Services.PlaylistService;
 using Chinook.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,11 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ChinookUser>>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IPlayListRepository, PlayListRepository>();
+builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
+
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
+
 
 var app = builder.Build();
 

@@ -9,6 +9,7 @@ namespace Chinook.Models
         public Playlist()
         {
             Tracks = new HashSet<Track>();
+            UserPlaylists = new List<UserPlaylist>();
         }
 
         public long PlaylistId { get; set; }

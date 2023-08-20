@@ -52,7 +52,21 @@ namespace Chinook.Infrastructure.Repositores
         /// <returns>Playlist obejct</returns>
         public async Task<Playlist> GetPlaylist(long id)
         {
-            return await _context.Playlists.Include(x => x.UserPlaylists).FirstOrDefaultAsync(o => o.PlaylistId == id);
+            return await _context.Playlists
+                .Include(a => a.Tracks)
+                .ThenInclude(a => a.Album)
+                .ThenInclude(a => a.Artist)
+                .FirstOrDefaultAsync(o => o.PlaylistId == id);
+        }
+
+        public async Task<List<Playlist>> GetPlaylists(long id)
+        {
+            return await _context.Playlists
+                .Include(a => a.Tracks)
+                .ThenInclude(a => a.Album)
+                .ThenInclude(a => a.Artist)
+                .Where(o => o.PlaylistId == id)
+                .ToListAsync();
         }
 
         /// <summary>

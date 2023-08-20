@@ -11,7 +11,7 @@ namespace Chinook.Infrastructure.Services.PlaylistService
     {
         Task<List<Playlist>> GetAllPlaylist();
 
-
+        Task<ClientModels.Playlist> GetPlaylistById(int id, string CurrentUserId);
 
     }
 }

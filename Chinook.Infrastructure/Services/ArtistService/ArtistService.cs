@@ -1,8 +1,11 @@
-﻿using Chinook.Domain.Abstraction.Repositories;
+﻿using Chinook.ClientModels;
+using Chinook.Domain.Abstraction.Repositories;
 using Chinook.Infrastructure.Repositores;
 using Chinook.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -34,6 +37,19 @@ namespace Chinook.Infrastructure.Services.ArtistService
         public async Task<List<Album>> GetAlbumByArtist(int ArtistId)
         {
             return await _AlbumRepository.GetByArtistId(ArtistId);
+        }
+
+        public async Task<List<PlaylistTrack>> GetTracksByArtist(long ArtistId,string currentUserId)
+        {
+           var tracks =  await _ArtistRepository.GetAllTracksAsync(ArtistId);
+          return  tracks.Select(t => new PlaylistTrack()
+           {
+               AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
+               TrackId = t.TrackId,
+               TrackName = t.Name,
+               IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == currentUserId && up.Playlist.Name == "Favorites")).Any()
+           })
+           .ToList();
         }
     }
 }

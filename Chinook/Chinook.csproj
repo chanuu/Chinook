@@ -7,9 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ClientModels\**" />
     <Compile Remove="Migrations\**" />
+    <Content Remove="ClientModels\**" />
     <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="ClientModels\**" />
     <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="ClientModels\**" />
     <None Remove="Migrations\**" />
   </ItemGroup>
 

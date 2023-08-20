@@ -10,9 +10,11 @@ namespace Chinook.Domain.Abstraction.Repositories
 {
     public interface IArtistRepository : IRepository<Artist>
     {
-        Task<Artist> GetAsync(long airportId);
+        Task<Artist> GetAsync(long artistId);
 
         Task<List<Artist>> GetAllAsync();
+
+        Task<List<Track>> GetAllTracksAsync(long artistId);
 
 
     }

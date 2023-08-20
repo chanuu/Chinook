@@ -1,4 +1,5 @@
-﻿using Chinook.Models;
+﻿using Chinook.ClientModels;
+using Chinook.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,8 @@ namespace Chinook.Infrastructure.Services.ArtistService
         Task<List<Artist>> GetArtist();
 
         Task<List<Album>> GetAlbumByArtist(int ArtistId);
+
+        Task<List<PlaylistTrack>> GetTracksByArtist(long ArtistId, string currentUserId);
+
     }
 }

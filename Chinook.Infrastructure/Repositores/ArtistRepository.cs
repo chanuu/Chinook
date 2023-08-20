@@ -31,6 +31,12 @@ namespace Chinook.Infrastructure.Repositores
             return await _context.Artists.Include(x => x.Albums).ToListAsync();
         }
 
+        public async Task<List<Track>> GetAllTracksAsync(long artistId)
+        {
+            return await _context.Tracks.Where(a => a.Album.ArtistId == artistId)
+            .Include(a => a.Album).ToListAsync();
+        }
+
         // get artist by ID 
         public async Task<Artist> GetAsync(long artistId)
         {

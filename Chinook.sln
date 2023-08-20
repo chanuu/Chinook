@@ -10,9 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{7A
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chinook.Domain", "Chinook.Domain\Chinook.Domain.csproj", "{D91AC5DE-935C-4AEE-95E0-0CD48EBFFCD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chinook.Domain", "Chinook.Domain\Chinook.Domain.csproj", "{D91AC5DE-935C-4AEE-95E0-0CD48EBFFCD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chinook.Infrastructure", "Chinook.Infrastructure\Chinook.Infrastructure.csproj", "{49DF286E-8AB2-49B4-83AF-53BDABF16051}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chinook.Infrastructure", "Chinook.Infrastructure\Chinook.Infrastructure.csproj", "{49DF286E-8AB2-49B4-83AF-53BDABF16051}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

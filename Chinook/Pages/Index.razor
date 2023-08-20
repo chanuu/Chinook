@@ -9,12 +9,13 @@
 
 <h1>Artists</h1>
 
-@if (Artists == null)
+@if (Artists == null || isLoading == true )
 {
     <Loading />
 }
 else
 {
+    <ArtistSearchComponent OnSearchArtist="SearchArtistByName"></ArtistSearchComponent>
     <table class="table table-striped table-hover table-sm">
         <thead>
             <tr>
@@ -38,16 +39,26 @@ else
     private List<Artist> Artists;
    
     @inject IArtistService ArtistService;
+    private bool isLoading = true;
     
-
+   
     protected override async Task OnInitializedAsync() {
         await InvokeAsync(StateHasChanged);
         Artists =  await ArtistService.GetArtist();
+        isLoading = false;
     }
 
     public async Task<List<Album>> GetAlbumsForArtist(int artistId)
     {
-       
+        isLoading = false;
         return await ArtistService.GetAlbumByArtist(artistId);
+        
+    }
+
+    private async Task SearchArtistByName(string key)
+    {
+        isLoading = true;
+        Artists = await ArtistService.SearchArtistByArtist(key);
+        isLoading = false;
     }
 }

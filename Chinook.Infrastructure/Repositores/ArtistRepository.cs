@@ -31,13 +31,32 @@ namespace Chinook.Infrastructure.Repositores
             return await _context.Artists.Include(x => x.Albums).ToListAsync();
         }
 
+        /// <summary>
+        /// search artist by name 
+        /// </summary>
+        /// <param name="key">search key</param>
+        /// <returns></returns>
+        public async Task<List<Artist>> GetAllByNameAsync(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return await _context.Artists.Include(x => x.Albums).ToListAsync();
+            }
+
+           return await _context.Artists.Where(x=>x.Name.Contains(key)).ToListAsync();
+        }
+
         public async Task<List<Track>> GetAllTracksAsync(long artistId)
         {
             return await _context.Tracks.Where(a => a.Album.ArtistId == artistId)
             .Include(a => a.Album).ToListAsync();
         }
 
-        // get artist by ID 
+        /// <summary>
+        /// get artist by Id
+        /// </summary>
+        /// <param name="artistId"></param>
+        /// <returns></returns>
         public async Task<Artist> GetAsync(long artistId)
         {
             return await _context.Artists.Include(x => x.Albums).FirstOrDefaultAsync(o => o.ArtistId == artistId);

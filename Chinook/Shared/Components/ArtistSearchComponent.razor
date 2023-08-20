@@ -1,0 +1,17 @@
+﻿<div class="input-group">
+    <input type="text" class="form-control" placeholder="Search By ArtistName" @bind="ArtistNameKey">
+    <button class="btn-success input-group-text" @onclick="OnSearch">Search</button>
+</div>
+
+
+@code {
+    private string ArtistNameKey = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSearchArtist { get; set; }
+
+    private async Task OnSearch()
+    {
+        await OnSearchArtist.InvokeAsync(ArtistNameKey);
+    }
+}

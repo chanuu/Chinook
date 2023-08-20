@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chinook.Domain.Abstraction
+namespace Chinook.Domain.Abstraction.Common
 {
-    public interface IRepository<T> where T : class
+    public interface BaseEntity
     {
-        IUnitOfWork UnitOfWork { get; }
     }
 }

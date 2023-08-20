@@ -1,5 +1,8 @@
 using Chinook;
 using Chinook.Areas.Identity;
+using Chinook.Domain.Abstraction.Common;
+using Chinook.Domain.Abstraction.Repositories;
+using Chinook.Infrastructure.Repositores;
 using Chinook.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +16,13 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ChinookUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ChinookContext>();
 
+//builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ChinookUser>>();
+builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 
 var app = builder.Build();
 

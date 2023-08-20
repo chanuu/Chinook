@@ -63,5 +63,27 @@ namespace Chinook.Infrastructure.Repositores
         {
            _context.Playlists.Remove(playlist);
         }
+
+        /// <summary>
+        /// add track to exsiting playlist 
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="playlsitId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task AddTrackToPlaylistAsync(Track track, long playlsitId)
+        {
+           var Playlist = await _context.Playlists.Include(x => x.UserPlaylists).FirstOrDefaultAsync(o => o.PlaylistId == playlsitId);
+           if(Playlist == null)
+            {
+                throw new Exception("Cannot Find Playlist With Given Id !");
+            }
+            else
+            {
+                Playlist.Tracks.Add(track);
+                await UnitOfWork.SaveChangesAsync();
+                
+            }
+        }
     }
 }

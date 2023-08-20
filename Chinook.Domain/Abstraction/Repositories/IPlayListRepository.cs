@@ -18,6 +18,8 @@ namespace Chinook.Domain.Abstraction.Repositories
 
         Task<Playlist> GetPlaylist(long id);
 
+        Task AddTrackToPlaylistAsync(Track track,long playlsitId);
+
 
 
     }

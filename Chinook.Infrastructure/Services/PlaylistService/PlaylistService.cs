@@ -53,19 +53,6 @@ namespace Chinook.Infrastructure.Services.PlaylistService
 
             }
 
-            //return _Playlists.Select(p => new ClientModels.Playlist()
-            //{
-            //    Name = p.Name,
-            //    Tracks = p.Tracks.Select(t => new ClientModels.PlaylistTrack()
-            //    {
-            //        AlbumTitle = t.Album.Title,
-            //        ArtistName = t.Album.Artist.Name,
-            //        TrackId = t.TrackId,
-            //        TrackName = t.Name,
-            //        IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == CurrentUserId && up.Playlist.Name == "Favorites")).Any()
-            //    }).ToList()
-            //})
-            //.FirstOrDefault(); ;
             return _client;
         }
     }

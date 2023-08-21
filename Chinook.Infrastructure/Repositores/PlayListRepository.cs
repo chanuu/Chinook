@@ -246,9 +246,7 @@ namespace Chinook.Infrastructure.Repositores
         // remove track from favorite
         public async Task RemoveFromfavorite(long trackId, string UserId)
         {
-            //var PlayList = await _context.Playlists
-            //              .Where(x=>x.PlaylistId== playlistId)
-            //              .FirstOrDefaultAsync();
+            
             var PlayList = await _context.Playlists
                .Include(x => x.Tracks)
                .Where(x => x.UserPlaylists

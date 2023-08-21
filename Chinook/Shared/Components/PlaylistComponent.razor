@@ -4,17 +4,27 @@
 @inject IPlaylistService PlaylistService
 
 <nav class="flex-column">
-    
-    
+
+
     @if (UsersPlaylist != null)
     {
         @foreach (var playlist in UsersPlaylist)
         {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
-                    <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name
-                </NavLink>
-            </div>
+                    <div class="nav-item px-3">
+                @if (playlist.Name == "Favorites")
+                {
+                            <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
+                                        <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>My favorite tracks
+                           </NavLink>
+                }
+                else
+                {
+                            <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
+                            <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name
+                        </NavLink>
+                }
+
+                    </div>
         }
     }
 </nav>

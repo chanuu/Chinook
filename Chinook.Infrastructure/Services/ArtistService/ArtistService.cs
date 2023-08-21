@@ -15,8 +15,8 @@ namespace Chinook.Infrastructure.Services.ArtistService
 {
     public class ArtistService : IArtistService
     {
-       private IArtistRepository _ArtistRepository { get; set; }
-       private IAlbumRepository _AlbumRepository { get; set; }
+        private IArtistRepository _ArtistRepository { get; set; }
+        private IAlbumRepository _AlbumRepository { get; set; }
 
         public ArtistService(IArtistRepository artistRepository, IAlbumRepository albumRepository)
         {
@@ -39,22 +39,22 @@ namespace Chinook.Infrastructure.Services.ArtistService
             return await _AlbumRepository.GetByArtistId(ArtistId);
         }
 
-        public async Task<List<PlaylistTrack>> GetTracksByArtist(long ArtistId,string currentUserId)
+        public async Task<List<PlaylistTrack>> GetTracksByArtist(long ArtistId, string currentUserId)
         {
-           var tracks =  await _ArtistRepository.GetAllTracksAsync(ArtistId);
-          return  tracks.Select(t => new PlaylistTrack()
-           {
-               AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
-               TrackId = t.TrackId,
-               TrackName = t.Name,
-               IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == currentUserId && up.Playlist.Name == "Favorites")).Any()
-           })
-           .ToList();
+            var tracks = await _ArtistRepository.GetAllTracksAsync(ArtistId);
+            return tracks.Select(t => new PlaylistTrack()
+            {
+                AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
+                TrackId = t.TrackId,
+                TrackName = t.Name,
+                IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == currentUserId && up.Playlist.Name == "Favorites")).Any()
+            })
+             .ToList();
         }
 
         public async Task<List<Artist>> SearchArtistByArtist(string key)
         {
-         return  await  _ArtistRepository.GetAllByNameAsync(key);
+            return await _ArtistRepository.GetAllByNameAsync(key);
         }
     }
 }

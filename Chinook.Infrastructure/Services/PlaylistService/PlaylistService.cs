@@ -33,14 +33,14 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         /// <param name="id"></param>
         /// <param name="CurrentUserId"></param>
         /// <returns></returns>
-        public async Task<ClientModels.Playlist> GetPlaylistById(int id,string CurrentUserId)
+        public async Task<ClientModels.Playlist> GetPlaylistById(int id, string CurrentUserId)
         {
-           var _Playlists = await _PlayListRepository.GetPlaylist(id);
+            var _Playlists = await _PlayListRepository.GetPlaylist(id);
 
-             ClientModels.Playlist _client = new ClientModels.Playlist();
+            ClientModels.Playlist _client = new ClientModels.Playlist();
             _client.Tracks = new List<ClientModels.PlaylistTrack>();
             _client.Name = _Playlists.Name;
-           foreach(var tracks in _Playlists.Tracks)
+            foreach (var tracks in _Playlists.Tracks)
             {
                 ClientModels.PlaylistTrack PlayListTrack = new ClientModels.PlaylistTrack();
                 PlayListTrack.AlbumTitle = tracks.Album.Title;
@@ -56,13 +56,13 @@ namespace Chinook.Infrastructure.Services.PlaylistService
             return _client;
         }
 
-       
-       
-       // create New Playlist or Assign to the Exisiting one using User Id 
-        public async Task CreatePlaylist(string playlistName,string UserId,long trackId,long playlistId)
+
+
+        // create New Playlist or Assign to the Exisiting one using User Id 
+        public async Task CreatePlaylist(string playlistName, string UserId, long trackId, long playlistId)
         {
-          
-          if(playlistName != null)
+
+            if (playlistName != null)
             {
                 await _PlayListRepository.AddPlaylistToUser(UserId, playlistName, trackId);
             }
@@ -70,20 +70,20 @@ namespace Chinook.Infrastructure.Services.PlaylistService
             {
                 await _PlayListRepository.AddTrackToPlaylistAsync(trackId, playlistId);
             }
-          
 
-           
+
+
         }
 
         public async Task<List<Playlist>> GetPlayListOfUsers(string UserId)
         {
-           return await _PlayListRepository.GetUsersPlayList(UserId);
+            return await _PlayListRepository.GetUsersPlayList(UserId);
         }
 
         // add track to Tofavorite
         public async Task AddTofavorite(long trackId, string userId)
         {
-            await _PlayListRepository.AddTofavorite(trackId,userId);
+            await _PlayListRepository.AddTofavorite(trackId, userId);
         }
 
         //remove track from playlist 

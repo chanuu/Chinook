@@ -88,17 +88,24 @@ else
         return userId;
     }
 
-    private void FavoriteTrack(long trackId)
+    private async Task FavoriteTrack(long trackId)
     {
         var track = Playlist.Tracks.FirstOrDefault(t => t.TrackId == trackId);
+
         InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} added to playlist Favorites.";
         _PlaylistService.AddTofavorite(trackId, CurrentUserId);
+
+        Playlist = await _PlaylistService.GetPlaylistById((int)PlaylistId, CurrentUserId);
     }
 
     private async Task UnfavoriteTrack(long trackId)
     {
         var track = Playlist.Tracks.FirstOrDefault(t => t.TrackId == trackId);
-        await _PlaylistService.RemoveFromfavorite(trackId, PlaylistId);
+
+        await _PlaylistService.RemoveFromfavorite(trackId, CurrentUserId);
+        
+        Playlist = await _PlaylistService.GetPlaylistById((int)PlaylistId, CurrentUserId);
+
         InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} removed from playlist Favorites.";
     }
 

@@ -244,17 +244,24 @@ namespace Chinook.Infrastructure.Repositores
         }
 
         // remove track from favorite
-        public async Task RemoveFromfavorite(long trackId, long playlistId)
+        public async Task RemoveFromfavorite(long trackId, string UserId)
         {
+            //var PlayList = await _context.Playlists
+            //              .Where(x=>x.PlaylistId== playlistId)
+            //              .FirstOrDefaultAsync();
             var PlayList = await _context.Playlists
-                          .Where(x=>x.PlaylistId== playlistId)
-                          .FirstOrDefaultAsync();
+               .Include(x => x.Tracks)
+               .Where(x => x.UserPlaylists
+               .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
+               .FirstOrDefaultAsync();
 
             var track =   PlayList.Tracks.Where(x=>x.TrackId== trackId).SingleOrDefault();
 
+            
+
             if (track != null)
             {
-                _context.Tracks.Remove(track);
+                PlayList.Tracks.Remove(track);
                 await UnitOfWork.SaveChangesAsync();
             }
 

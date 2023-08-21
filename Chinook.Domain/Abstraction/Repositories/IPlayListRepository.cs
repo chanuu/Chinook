@@ -1,5 +1,6 @@
 ﻿using Chinook.Domain.Abstraction.Common;
 using Chinook.Models;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,16 @@ namespace Chinook.Domain.Abstraction.Repositories
         Task<List<Playlist>> GetUsersPlayList(string UserId);
 
         Task AddTofavorite(long trackId, string userId);
+
+
+        Task RemoveFromfavorite(long trackId, long playlistId);
+
+        bool IsFavoriteTrack(Track Tracks, string UserId);
+
+
+
+
+
 
 
 

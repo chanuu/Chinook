@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -220,5 +221,48 @@ namespace Chinook.Infrastructure.Repositores
             }
 
         }
+
+
+        // check is favorite track
+        public bool IsFavoriteTrack(Track Tracks, string UserId)
+        {
+            bool isFavorites = false;
+          
+                var favorite =  _context.Playlists
+                 .Include(x => x.Tracks)
+            
+                 .Where(x => x.UserPlaylists
+                 .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
+                 .FirstOrDefault();
+
+                var MatchedTrack = favorite.Tracks.Where(x => x.TrackId == Tracks.TrackId);
+                if (MatchedTrack.Count()>0){
+                    isFavorites = true;
+                }
+          
+            return isFavorites;
+        }
+
+        // remove track from favorite
+        public async Task RemoveFromfavorite(long trackId, long playlistId)
+        {
+            var PlayList = await _context.Playlists
+                          .Where(x=>x.PlaylistId== playlistId)
+                          .FirstOrDefaultAsync();
+
+            var track =   PlayList.Tracks.Where(x=>x.TrackId== trackId).SingleOrDefault();
+
+            if (track != null)
+            {
+                _context.Tracks.Remove(track);
+                await UnitOfWork.SaveChangesAsync();
+            }
+
+
+        }
     }
+
+
+
+    
 }

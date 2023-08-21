@@ -47,8 +47,7 @@ namespace Chinook.Infrastructure.Services.PlaylistService
                 PlayListTrack.ArtistName = tracks.Album.Artist.Name;
                 PlayListTrack.TrackId = tracks.TrackId;
                 PlayListTrack.TrackName = tracks.Name;
-                PlayListTrack.IsFavorite = tracks.Playlists?
-               .Any(p => p.UserPlaylists.Any(up => up.UserId == CurrentUserId && up.Playlist.Name == "Favorites")) ?? false;
+                PlayListTrack.IsFavorite = _PlayListRepository.IsFavoriteTrack(tracks, CurrentUserId);
 
                 _client.Tracks.Add(PlayListTrack);
 
@@ -57,7 +56,10 @@ namespace Chinook.Infrastructure.Services.PlaylistService
             return _client;
         }
 
-        public async Task<Playlist> CreatePlaylist(string playlistName,string UserId,long trackId,long playlistId)
+       
+       
+       // create New Playlist or Assign to the Exisiting one using User Id 
+        public async Task CreatePlaylist(string playlistName,string UserId,long trackId,long playlistId)
         {
           
           if(playlistName != null)
@@ -70,7 +72,7 @@ namespace Chinook.Infrastructure.Services.PlaylistService
             }
           
 
-           return null;
+           
         }
 
         public async Task<List<Playlist>> GetPlayListOfUsers(string UserId)
@@ -78,9 +80,16 @@ namespace Chinook.Infrastructure.Services.PlaylistService
            return await _PlayListRepository.GetUsersPlayList(UserId);
         }
 
+        // add track to Tofavorite
         public async Task AddTofavorite(long trackId, string userId)
         {
             await _PlayListRepository.AddTofavorite(trackId,userId);
+        }
+
+        //remove track from playlist 
+        public async Task RemoveFromfavorite(long trackId, long playlistId)
+        {
+            await _PlayListRepository.RemoveFromfavorite(trackId,playlistId);
         }
     }
 }

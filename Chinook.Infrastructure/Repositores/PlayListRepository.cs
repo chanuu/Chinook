@@ -252,9 +252,11 @@ namespace Chinook.Infrastructure.Repositores
 
             var track =   PlayList.Tracks.Where(x=>x.TrackId== trackId).SingleOrDefault();
 
+            
+
             if (track != null)
             {
-                _context.Tracks.Remove(track);
+                PlayList.Tracks.Remove(track);
                 await UnitOfWork.SaveChangesAsync();
             }
 

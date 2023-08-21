@@ -87,9 +87,9 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         }
 
         //remove track from playlist 
-        public async Task RemoveFromfavorite(long trackId, long playlistId)
+        public async Task RemoveFromfavorite(long trackId, string userId)
         {
-            await _PlayListRepository.RemoveFromfavorite(trackId,playlistId);
+            await _PlayListRepository.RemoveFromfavorite(trackId, userId);
         }
     }
 }

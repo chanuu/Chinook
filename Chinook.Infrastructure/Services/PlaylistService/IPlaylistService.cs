@@ -13,5 +13,14 @@ namespace Chinook.Infrastructure.Services.PlaylistService
 
         Task<ClientModels.Playlist> GetPlaylistById(int id, string CurrentUserId);
 
+        Task<Playlist> CreatePlaylist(string playlistName, string UserId,long trackId,long playlistId);
+
+        Task<List<Playlist>> GetPlayListOfUsers(string UserId);
+
+        Task AddTofavorite(long trackId, string userId);
+
+
+
+
     }
 }

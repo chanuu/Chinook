@@ -1,0 +1,45 @@
+﻿@using Chinook.Models
+@using Chinook.Infrastructure.Services.PlaylistService
+@using System.Security.Claims;
+@inject IPlaylistService PlaylistService
+
+<nav class="flex-column">
+    
+    <div class="nav-item px-3">
+        <NavLink class="nav-link" href="playlist/playlistnumber">
+            <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>My favorite tracks
+        </NavLink>
+    </div>
+    @if (UsersPlaylist != null)
+    {
+        @foreach (var playlist in UsersPlaylist)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
+                    <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name
+                </NavLink>
+            </div>
+        }
+    }
+</nav>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+    private List<Playlist> UsersPlaylist;
+
+    private async Task<string> GetUserId()
+    {
+        var user = (await authenticationState).User;
+        var userId = user.FindFirst(u => u.Type.Contains(ClaimTypes.NameIdentifier))?.Value;
+        return userId;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var UserId = await GetUserId();
+        // Assuming you have a way to fetch user's playlists
+        UsersPlaylist = await PlaylistService.GetPlayListOfUsers(UserId);
+
+        StateHasChanged();
+    }
+}

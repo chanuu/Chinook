@@ -1,5 +1,6 @@
 ﻿
 
+using Chinook.Domain.Abstraction.Common;
 using Chinook.Domain.Abstraction.Repositories;
 using Chinook.Models;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,32 @@ namespace Chinook.Infrastructure.Services.PlaylistService
             }
 
             return _client;
+        }
+
+        public async Task<Playlist> CreatePlaylist(string playlistName,string UserId,long trackId,long playlistId)
+        {
+          
+          if(playlistName != null)
+            {
+                await _PlayListRepository.AddPlaylistToUser(UserId, playlistName, trackId);
+            }
+            else
+            {
+                await _PlayListRepository.AddTrackToPlaylistAsync(trackId, playlistId);
+            }
+          
+
+           return null;
+        }
+
+        public async Task<List<Playlist>> GetPlayListOfUsers(string UserId)
+        {
+           return await _PlayListRepository.GetUsersPlayList(UserId);
+        }
+
+        public async Task AddTofavorite(long trackId, string userId)
+        {
+            await _PlayListRepository.AddTofavorite(trackId,userId);
         }
     }
 }

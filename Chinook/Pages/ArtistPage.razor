@@ -3,6 +3,7 @@
 
 @using Chinook.Domain.Abstraction.Repositories;
 @using Chinook.Infrastructure.Services.ArtistService;
+@using Chinook.Infrastructure.Services.PlaylistService;
 @using Chinook.Models
 @using Chinook.ClientModels
 @using Microsoft.EntityFrameworkCore
@@ -62,17 +63,22 @@ else
 @code {
     [Parameter] public long ArtistId { get; set; }
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
-   
+
     private Modal PlaylistDialog { get; set; }
 
     private Artist Artist;
     private List<PlaylistTrack> Tracks;
+    private List<Chinook.Models.Playlist> UsersPlaylist;
     private DbContext DbContext;
     private PlaylistTrack SelectedTrack;
     private string InfoMessage;
     private string CurrentUserId;
+    private string NewPlaylistName;
+    private long SelectedPlaylistId;
     @inject IArtistRepository ArtistRepository;
     @inject IArtistService ArtistService;
+    @inject IPlaylistService PlaylistService;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,6 +92,7 @@ else
         // get tracks by artist id 
         Tracks =await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);
 
+        UsersPlaylist = await PlaylistService.GetPlayListOfUsers(CurrentUserId);
     }
 
     private async Task<string> GetUserId()
@@ -98,6 +105,7 @@ else
     private void FavoriteTrack(long trackId)
     {
         var track = Tracks.FirstOrDefault(t => t.TrackId == trackId);
+        PlaylistService.AddTofavorite(trackId, CurrentUserId);
         InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} added to playlist Favorites.";
     }
 
@@ -117,6 +125,7 @@ else
     private void AddTrackToPlaylist()
     {
         CloseInfoMessage();
+        PlaylistService.CreatePlaylist(NewPlaylistName, CurrentUserId, SelectedTrack.TrackId, SelectedPlaylistId);
         InfoMessage = $"Track {Artist.Name} - {SelectedTrack.AlbumTitle} - {SelectedTrack.TrackName} added to playlist {{playlist name}}.";
         PlaylistDialog.Close();
     }
@@ -143,15 +152,18 @@ else
 
         <div class="form-group mb-2">
             <label for="ExistingPlaylist">Add to existing playlist</label>
-            <select class="form-control" id="ExistingPlaylist">
-                <option>Playlist 1</option>
-                <option>Playlist 2</option>
-                <option>Playlist 3</option>
+            <select class="form-control" id="ExistingPlaylist" @bind="SelectedPlaylistId">
+                @foreach (var playlist in UsersPlaylist)
+                {
+                    <option value="@playlist.PlaylistId">@playlist.Name</option>
+                }
+                
+               
             </select>
         </div>
         <div class="form-group mb-2">
             <label for="NewPlaylist">Create new playlist</label>
-            <input type="text" id="NewPlaylist" class="form-control" placeholder="Name for the new playlist">
+            <input type="text" id="NewPlaylist" @bind="NewPlaylistName" class="form-control" placeholder="Name for the new playlist">
         </div>
     </Body>
     <Footer>

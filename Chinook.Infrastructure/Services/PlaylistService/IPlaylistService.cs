@@ -9,9 +9,23 @@ namespace Chinook.Infrastructure.Services.PlaylistService
 {
     public interface IPlaylistService
     {
+        //get all playlist from database
         Task<List<Playlist>> GetAllPlaylist();
 
+        //getplaylist by ID
         Task<ClientModels.Playlist> GetPlaylistById(int id, string CurrentUserId);
+
+        Task CreatePlaylist(string playlistName, string UserId,long trackId,long playlistId);
+
+        //get playlist by created userId
+        Task<List<Playlist>> GetPlayListOfUsers(string UserId);
+
+        // add track to favorite
+        Task AddTofavorite(long trackId, string userId);
+
+        // remove from favorite
+        Task RemoveFromfavorite(long trackId, long playlistId);
+
 
     }
 }

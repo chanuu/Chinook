@@ -46,25 +46,32 @@ namespace Chinook.Infrastructure.Services.ArtistService
         public async Task<List<PlaylistTrack>> GetTracksByArtist(long ArtistId, string currentUserId)
         {
             var tracks = await _ArtistRepository.GetAllTracksAsync(ArtistId);
-            return tracks.Select(t => new PlaylistTrack()
+            if (tracks.Any())
             {
-                AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
-                TrackId = t.TrackId,
-                TrackName = t.Name,
-               // IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == currentUserId && up.Playlist.Name == "Favorites")).Any()
-               IsFavorite = _PlayListRepository.IsFavoriteTrack(t,currentUserId)
-            })
+                return tracks.Select(t => new PlaylistTrack()
+                {
+                    AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
+                    TrackId = t.TrackId,
+                    TrackName = t.Name,
+                    IsFavorite = _PlayListRepository.IsFavoriteTrack(t, currentUserId)
+                })
              .ToList();
+            }
+            else
+            {
+                return new List<PlaylistTrack>();
+            }
+
         }
 
-        public async Task<List<Artist>> SearchArtistByArtist(string key)
+        public async Task<List<Artist>> SearchArtistByName(string key)
         {
             return await _ArtistRepository.GetAllByNameAsync(key);
         }
 
-        public  async Task<Artist> GetAsync(long artistId)
+        public async Task<Artist> GetAsync(long artistId)
         {
-          return  await _ArtistRepository.GetAsync(artistId);
+            return await _ArtistRepository.GetAsync(artistId);
         }
     }
 }

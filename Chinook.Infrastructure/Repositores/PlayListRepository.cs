@@ -102,6 +102,10 @@ namespace Chinook.Infrastructure.Repositores
             {
                 var track = await _context.Tracks
                    .FirstOrDefaultAsync(t => t.TrackId == trackId);
+                if (track == null)
+                {
+                    throw new Exception("Cannot Find Track with Given Id !");
+                }
 
                 Playlist.Tracks.Add(track);
                 await UnitOfWork.SaveChangesAsync();
@@ -138,6 +142,10 @@ namespace Chinook.Infrastructure.Repositores
                     NewplayList.Tracks.Add(track);
 
                     await UnitOfWork.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception("Cannot Find Track with Given Id !");
                 }
             }
 
@@ -238,8 +246,6 @@ namespace Chinook.Infrastructure.Repositores
              .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
              .FirstOrDefault();
 
-            
-
             if(favorite != null)
             {
                 var MatchedTrack = favorite.Tracks.Where(x => x.TrackId == Tracks.TrackId);
@@ -248,8 +254,6 @@ namespace Chinook.Infrastructure.Repositores
                     isFavorites = true;
                 }
             }
-
-           
 
             return isFavorites;
         }
@@ -263,10 +267,12 @@ namespace Chinook.Infrastructure.Repositores
                .Where(x => x.UserPlaylists
                .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
                .FirstOrDefaultAsync();
+            if (PlayList == null)
+            {
+                throw new Exception("Cannot Find Playlist With Given Id !");
+            }
 
             var track = PlayList.Tracks.Where(x => x.TrackId == trackId).SingleOrDefault();
-
-
 
             if (track != null)
             {
@@ -276,7 +282,7 @@ namespace Chinook.Infrastructure.Repositores
 
 
         }
-
+        //remove from playlist 
         public async Task RemoveFromPlalist(long trackId, long PlalistId)
         {
             var Playlist = await _context.Playlists
@@ -300,6 +306,7 @@ namespace Chinook.Infrastructure.Repositores
 
         }
 
+        // create favorite on intial login 
         public async Task<Playlist> Createfavorite(string userId)
         {
 
@@ -319,13 +326,11 @@ namespace Chinook.Infrastructure.Repositores
 
                 _context.Playlists.Add(_Playlist);
 
+                _Playlist.UserPlaylists.Add(new UserPlaylist { UserId = userId, PlaylistId = _Playlist.PlaylistId });
 
-               
-                    _Playlist.UserPlaylists.Add(new UserPlaylist { UserId = userId, PlaylistId = _Playlist.PlaylistId });
-
-                    await UnitOfWork.SaveChangesAsync();
+                await UnitOfWork.SaveChangesAsync();
                 return _Playlist;
-               
+
             }
             else
             {
@@ -335,9 +340,6 @@ namespace Chinook.Infrastructure.Repositores
                .Any(up => up.UserId == userId && up.Playlist.Name == "Favorites"))
                .FirstOrDefaultAsync();
                 return _Playlist;
-
-
-
 
             }
 

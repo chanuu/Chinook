@@ -79,7 +79,7 @@ else
     private async Task SearchArtistByName(string key)
     {
         isLoading = true;
-        Artists = await ArtistService.SearchArtistByArtist(key);
+        Artists = await ArtistService.SearchArtistByName(key);
         isLoading = false;
     }
 }

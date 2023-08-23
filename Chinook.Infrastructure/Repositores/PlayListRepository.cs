@@ -90,7 +90,7 @@ namespace Chinook.Infrastructure.Repositores
         /// <param name="playlsitId"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task AddTrackToPlaylistAsync(long trackId, long playlsitId)
+        public async Task<Playlist> AddTrackToPlaylistAsync(long trackId, long playlsitId)
         {
            var Playlist = await _context.Playlists.Include(x => x.UserPlaylists).FirstOrDefaultAsync(o => o.PlaylistId == playlsitId);
 
@@ -107,6 +107,7 @@ namespace Chinook.Infrastructure.Repositores
                 await UnitOfWork.SaveChangesAsync();
                 
             }
+            return Playlist;
         }
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace Chinook.Infrastructure.Repositores
         /// <param name="playlsitId"></param>
         /// <param name="trackId"></param>
         /// <returns></returns>
-        public async Task AddPlaylistToUser(string UserId, string playListName, long trackId)
+        public async Task<Playlist> AddPlaylistToUser(string UserId, string playListName, long trackId)
         {
             //todo : implment static create methode for object creation
             Playlist NewplayList = new Playlist();
@@ -139,6 +140,8 @@ namespace Chinook.Infrastructure.Repositores
                     await UnitOfWork.SaveChangesAsync();
                 }
             }
+
+            return NewplayList;
 
 
         }

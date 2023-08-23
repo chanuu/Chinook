@@ -6,8 +6,14 @@
 @using Chinook.Infrastructure.Services.PlaylistService;
 @using Chinook.Models
 @using Chinook.ClientModels
+@using Chinook.State.Actions.Playlist;
+@using Chinook.State.Playlist;
 @using Microsoft.EntityFrameworkCore
 @using System.Security.Claims;
+@using Fluxor
+@using Chinook.State
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
 
 @if (!string.IsNullOrWhiteSpace(InfoMessage))
 {
@@ -28,15 +34,15 @@
 else
 {
     <h1>@Artist.Name</h1>
-        <table class="table table-striped table-hover table-sm">
-            <thead>
-                <tr>
-                    <th>Album title</th>
-                    <th>Track name</th>
-                    <th></th>
+    <table class="table table-striped table-hover table-sm">
+        <thead>
+            <tr>
+                <th>Album title</th>
+                <th>Track name</th>
+                <th></th>
             </tr>
-            </thead>
-            <tbody>
+        </thead>
+        <tbody>
             @foreach (var track in Tracks)
             {
                 <tr>
@@ -55,12 +61,13 @@ else
                     </td>
                 </tr>
             }
-            </tbody>
-        </table>
+        </tbody>
+    </table>
 
 }
 
 @code {
+    @inject IDispatcher Dispatcher
     [Parameter] public long ArtistId { get; set; }
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
 
@@ -78,19 +85,21 @@ else
     @inject IArtistRepository ArtistRepository;
     @inject IArtistService ArtistService;
     @inject IPlaylistService PlaylistService;
+    @inject IState<PlaylistState> PlaylistState
 
+    @inject IDispatcher Dispatcher
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         await InvokeAsync(StateHasChanged);
         CurrentUserId = await GetUserId();
-       
-        // get artist by srtist id 
+
+        // get artist by srtist id
         Artist = await ArtistRepository.GetAsync(ArtistId);
-        
-        // get tracks by artist id 
-        Tracks =await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);
+
+        // get tracks by artist id
+        Tracks = await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);
 
         UsersPlaylist = await PlaylistService.GetPlayListOfUsers(CurrentUserId);
     }
@@ -122,10 +131,13 @@ else
         PlaylistDialog.Open();
     }
 
-    private void AddTrackToPlaylist()
+    private async void AddTrackToPlaylist()
     {
         CloseInfoMessage();
-        PlaylistService.CreatePlaylist(NewPlaylistName, CurrentUserId, SelectedTrack.TrackId, SelectedPlaylistId);
+        var playlsit = await PlaylistService.CreatePlaylist(NewPlaylistName, CurrentUserId, SelectedTrack.TrackId, SelectedPlaylistId);
+        //var newPlaylist = new Models.Playlist { Name = NewPlaylistName };
+
+        Dispatcher.Dispatch(new UpdatePlaylistAction(playlsit, CurrentUserId));
         InfoMessage = $"Track {Artist.Name} - {SelectedTrack.AlbumTitle} - {SelectedTrack.TrackName} added to playlist {{playlist name}}.";
         PlaylistDialog.Close();
     }
@@ -157,8 +169,8 @@ else
                 {
                     <option value="@playlist.PlaylistId">@playlist.Name</option>
                 }
-                
-               
+
+
             </select>
         </div>
         <div class="form-group mb-2">

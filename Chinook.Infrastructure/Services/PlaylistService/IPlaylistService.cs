@@ -15,7 +15,7 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         //getplaylist by ID
         Task<ClientModels.Playlist> GetPlaylistById(int id, string CurrentUserId);
 
-        Task CreatePlaylist(string playlistName, string UserId,long trackId,long playlistId);
+        Task<Playlist> CreatePlaylist(string playlistName, string UserId,long trackId,long playlistId);
 
         //get playlist by created userId
         Task<List<Playlist>> GetPlayListOfUsers(string UserId);

@@ -21,9 +21,9 @@ namespace Chinook.Domain.Abstraction.Repositories
 
         Task<List<Playlist>> GetPlaylists(long id);
 
-        Task AddTrackToPlaylistAsync(long trackId,long playlsitId);
+        Task<Playlist> AddTrackToPlaylistAsync(long trackId,long playlsitId);
 
-        Task AddPlaylistToUser(string UserId, string playListName,long trackId);
+        Task<Playlist> AddPlaylistToUser(string UserId, string playListName,long trackId);
 
         Task<List<Playlist>> GetUsersPlayList(string UserId);
 

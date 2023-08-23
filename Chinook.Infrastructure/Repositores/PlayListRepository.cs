@@ -64,15 +64,7 @@ namespace Chinook.Infrastructure.Repositores
                 .FirstOrDefaultAsync(o => o.PlaylistId == id);
         }
 
-        public async Task<List<Playlist>> GetPlaylists(long id)
-        {
-            return await _context.Playlists
-                .Include(a => a.Tracks)
-                .ThenInclude(a => a.Album)
-                .ThenInclude(a => a.Artist)
-                .Where(o => o.PlaylistId == id)
-                .ToListAsync();
-        }
+      
 
         /// <summary>
         /// remove playlist 

@@ -1,19 +1,27 @@
 ﻿@page "/"
 @attribute [Authorize]
 
+@using Chinook.Infrastructure.Services.ArtistService;
+@using Chinook.Infrastructure.Services.PlaylistService;
 @using Chinook.Models
+@using Chinook.State.Actions.Playlist;
+@using Chinook.State.Playlist;
+@using Fluxor;
 @using Microsoft.EntityFrameworkCore
+@using System.Security.Claims;
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
 <PageTitle>Index</PageTitle>
 
 <h1>Artists</h1>
 
-@if (Artists == null)
+@if (Artists == null || isLoading == true )
 {
     <Loading />
 }
 else
 {
+    <ArtistSearchComponent OnSearchArtist="SearchArtistByName"></ArtistSearchComponent>
     <table class="table table-striped table-hover table-sm">
         <thead>
             <tr>
@@ -34,25 +42,44 @@ else
 }
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+    private string CurrentUserId;
+    @inject IPlaylistService _PlaylistService;
     private List<Artist> Artists;
-    [Inject] IDbContextFactory<ChinookContext> DbFactory { get; set; }
+   
+    @inject IArtistService ArtistService;
+    private bool isLoading = true;
+    @inject IState<PlaylistState> PlaylistState
+
+    @inject IDispatcher Dispatcher
+    
+    private async Task<string> GetUserId()
+    {
+        var user = (await authenticationState).User;
+        var userId = user.FindFirst(u => u.Type.Contains(ClaimTypes.NameIdentifier))?.Value;
+        return userId;
+    }
 
     protected override async Task OnInitializedAsync() {
         await InvokeAsync(StateHasChanged);
-        Artists = await GetArtists();
-    }
-
-    public async Task<List<Artist>> GetArtists()
-    {   
-        var dbContext = await DbFactory.CreateDbContextAsync();
-        var users = dbContext.Users.Include(a => a.UserPlaylists).ToList();
-        
-        return dbContext.Artists.ToList();
+        Artists =  await ArtistService.GetArtist();
+        CurrentUserId = await GetUserId();
+        var playList =  await _PlaylistService.Createfavorite(CurrentUserId);
+        Dispatcher.Dispatch(new UpdatePlaylistAction(playList, CurrentUserId));
+        isLoading = false;
     }
 
     public async Task<List<Album>> GetAlbumsForArtist(int artistId)
     {
-        var dbContext = await DbFactory.CreateDbContextAsync();
-        return dbContext.Albums.Where(a => a.ArtistId == artistId).ToList();
+        isLoading = false;
+        return await ArtistService.GetAlbumByArtist(artistId);
+        
+    }
+
+    private async Task SearchArtistByName(string key)
+    {
+        isLoading = true;
+        Artists = await ArtistService.SearchArtistByName(key);
+        isLoading = false;
     }
 }

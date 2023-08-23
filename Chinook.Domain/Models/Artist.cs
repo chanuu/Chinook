@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Chinook.Domain.Abstraction.Common;
+using System;
 using System.Collections.Generic;
 
 namespace Chinook.Models
 {
-    public partial class Artist
+    public partial class Artist : BaseEntity
     {
         public Artist()
         {

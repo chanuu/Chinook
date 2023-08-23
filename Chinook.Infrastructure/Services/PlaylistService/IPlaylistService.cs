@@ -26,6 +26,8 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         // remove from favorite
         Task RemoveFromfavorite(long trackId, string userId);
 
+        Task RemoveFromPlaylist(long trackId, long PlalistId);
+
 
     }
 }

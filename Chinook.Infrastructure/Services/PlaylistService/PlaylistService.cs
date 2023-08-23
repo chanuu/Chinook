@@ -91,5 +91,10 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         {
             await _PlayListRepository.RemoveFromfavorite(trackId, userId);
         }
+
+        public async Task RemoveFromPlaylist(long trackId, long PlalistId)
+        {
+            await _PlayListRepository.RemoveFromPlalist(trackId, PlalistId);
+        }
     }
 }

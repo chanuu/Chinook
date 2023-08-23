@@ -23,13 +23,13 @@
                     <div class="nav-item px-3">
                 @if (playlist.Name == "Favorites")
                 {
-                            <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
+                    <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")" @onclick="() => HandleClick(playlist.PlaylistId)" Match="NavLinkMatch.All">
                                         <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>My favorite tracks
                            </NavLink>
                 }
                 else
                 {
-                            <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
+                    <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")" @onclick="() => HandleClick(playlist.PlaylistId)" Match="NavLinkMatch.All">
                             <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name
                         </NavLink>
                 }
@@ -44,6 +44,7 @@
 @code {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private List<Playlist> UsersPlaylist;
+    @inject NavigationManager NavigationManager;
 
     private async Task<string> GetUserId()
     {
@@ -61,5 +62,10 @@
         dispatcher.Dispatch(new FetchDataAction(UserId));
 
         StateHasChanged();
+    }
+
+    private void HandleClick(long id)
+    {
+        NavigationManager.NavigateTo($"/playlist/{id}", true);
     }
 }

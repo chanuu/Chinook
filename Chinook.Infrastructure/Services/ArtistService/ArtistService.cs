@@ -18,10 +18,13 @@ namespace Chinook.Infrastructure.Services.ArtistService
         private IArtistRepository _ArtistRepository { get; set; }
         private IAlbumRepository _AlbumRepository { get; set; }
 
-        public ArtistService(IArtistRepository artistRepository, IAlbumRepository albumRepository)
+        private IPlayListRepository _PlayListRepository { get; set; }
+
+        public ArtistService(IArtistRepository artistRepository, IAlbumRepository albumRepository, IPlayListRepository playListRepository)
         {
             _ArtistRepository = artistRepository;
             _AlbumRepository = albumRepository;
+            _PlayListRepository = playListRepository;
         }
 
         public async Task<List<Artist>> GetArtist()
@@ -47,7 +50,8 @@ namespace Chinook.Infrastructure.Services.ArtistService
                 AlbumTitle = (t.Album == null ? "-" : t.Album.Title),
                 TrackId = t.TrackId,
                 TrackName = t.Name,
-                IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == currentUserId && up.Playlist.Name == "Favorites")).Any()
+               // IsFavorite = t.Playlists.Where(p => p.UserPlaylists.Any(up => up.UserId == currentUserId && up.Playlist.Name == "Favorites")).Any()
+               IsFavorite = _PlayListRepository.IsFavoriteTrack(t,currentUserId)
             })
              .ToList();
         }

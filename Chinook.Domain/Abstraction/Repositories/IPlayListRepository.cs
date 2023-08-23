@@ -32,6 +32,8 @@ namespace Chinook.Domain.Abstraction.Repositories
 
         Task RemoveFromfavorite(long trackId, string UserId);
 
+        Task RemoveFromPlalist(long trackId, long PlalistId);
+
         bool IsFavoriteTrack(Track Tracks, string UserId);
 
 

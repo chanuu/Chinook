@@ -47,11 +47,11 @@ else
             {
                 <tr>
                     <td>@track.AlbumTitle</td>
-                    <td>@track.TrackName</td>
+                    <td>@track.TrackName + @track.IsFavorite</td>
                     <td>
                         @if (track.IsFavorite)
                         {
-                            <a href="#" class="m-1" title="Unmark as favorite" @onclick="@(() => UnfavoriteTrack(track.TrackId))" @onclick:preventDefault><i class="bi bi-star-filled"></i></a>
+                            <a href="#" class="m-1" title="Unark as favorite" @onclick="@(() => UnfavoriteTrack(track.TrackId))" @onclick:preventDefault><i class="bi bi-star-fill"></i></a>
                         }
                         else
                         {
@@ -111,16 +111,21 @@ else
         return userId;
     }
 
-    private void FavoriteTrack(long trackId)
+    private async Task FavoriteTrack(long trackId)
     {
         var track = Tracks.FirstOrDefault(t => t.TrackId == trackId);
-        PlaylistService.AddTofavorite(trackId, CurrentUserId);
+        await PlaylistService.AddTofavorite(trackId, CurrentUserId);
+        Tracks = await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);
         InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} added to playlist Favorites.";
     }
 
-    private void UnfavoriteTrack(long trackId)
+    private async Task UnfavoriteTrack(long trackId)
     {
         var track = Tracks.FirstOrDefault(t => t.TrackId == trackId);
+        
+
+        await PlaylistService.RemoveFromfavorite(trackId, CurrentUserId);
+        Tracks = await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);
         InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} removed from playlist Favorites.";
     }
 
@@ -139,7 +144,9 @@ else
 
         Dispatcher.Dispatch(new UpdatePlaylistAction(playlsit, CurrentUserId));
         InfoMessage = $"Track {Artist.Name} - {SelectedTrack.AlbumTitle} - {SelectedTrack.TrackName} added to playlist {{playlist name}}.";
+       
         PlaylistDialog.Close();
+        Tracks = await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);
     }
 
     private void CloseInfoMessage()

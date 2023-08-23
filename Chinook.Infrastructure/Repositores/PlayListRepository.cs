@@ -268,6 +268,29 @@ namespace Chinook.Infrastructure.Repositores
 
 
         }
+
+        public async Task RemoveFromPlalist(long trackId, long PlalistId)
+        {
+            var Playlist = await _context.Playlists
+               .Include(x => x.Tracks)
+               .Where(x => x.PlaylistId == PlalistId)
+              
+               .FirstOrDefaultAsync();
+
+            if (Playlist !=null)
+            {
+              var track = Playlist.Tracks.Where(x => x.TrackId == trackId).SingleOrDefault();
+                if (track != null)
+                {
+                    Playlist.Tracks.Remove(track);
+                  
+                }
+            }
+
+            await UnitOfWork.SaveChangesAsync();
+
+
+        }
     }
 
 

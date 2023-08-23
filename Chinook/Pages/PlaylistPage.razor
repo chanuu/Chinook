@@ -37,10 +37,23 @@ else
             @foreach (var track in Playlist.Tracks)
             {
                 <tr>
-                    <td>@track.ArtistName - @track.AlbumTitle - @track.TrackName</td>
+                    <td>@track.ArtistName - @track.AlbumTitle - @track.TrackName - @Playlist.Name</td>
                     <td>
                         <div class="d-flex">
-                            @if (Playlist.Name != "Favorite")
+
+                            @if (Playlist.Name != "Favorites")
+                            {
+                                @if (track.IsFavorite)
+                                {
+                                    <a href="#" class="m-1" title="Unark as favorite" @onclick="@(() => UnfavoriteTrack(track.TrackId))" @onclick:preventDefault><i class="bi bi-star-fill"></i></a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="m-1" title="Mark as favorite" @onclick="@(() => FavoriteTrack(track.TrackId))" @onclick:preventDefault><i class="bi bi-star"></i></a>
+                                }
+
+                                <a href="#" class="m-1" title="Remove from this playlist" @onclick="@(() => RemoveTrack(track.TrackId))" @onclick:preventDefault><i class="bi bi-trash"></i></a>
+                            }else
                             {
                                 @if (track.IsFavorite)
                                 {
@@ -52,7 +65,11 @@ else
                                 }
 
                             }
-                            <a href="#" class="m-1" title="Remove from this playlist" @onclick="@(() => RemoveTrack(track.TrackId))" @onclick:preventDefault><i class="bi bi-trash"></i></a>
+                           
+                               
+                            
+                            
+                           
                         </div>
                     </td>
                 </tr>
@@ -109,8 +126,12 @@ else
         InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} removed from playlist Favorites.";
     }
 
-    private void RemoveTrack(long trackId)
+    private async Task RemoveTrack(long trackId)
     {
+        var track = Playlist.Tracks.FirstOrDefault(t => t.TrackId == trackId);
+        InfoMessage = $"Track {track.ArtistName} - {track.AlbumTitle} - {track.TrackName} Rremoved from the Playlist.";
+        await _PlaylistService.RemoveFromPlaylist(trackId, PlaylistId);
+        Playlist = await _PlaylistService.GetPlaylistById((int)PlaylistId, CurrentUserId);
         CloseInfoMessage();
 
     }

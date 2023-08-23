@@ -1,37 +1,50 @@
 ﻿@using Chinook.Models
 @using Chinook.Infrastructure.Services.PlaylistService
 @using System.Security.Claims;
+@using Chinook.State.Actions.Playlist;
+@using Chinook.State.Playlist;
+@using Fluxor
+@using Chinook.State
+
+@inject IState<PlaylistState> PlaylistState
+
 @inject IPlaylistService PlaylistService
+@inject IDispatcher dispatcher
+@inject IState<PlaylistState> playlist;
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
 <nav class="flex-column">
 
 
-    @if (UsersPlaylist != null)
+    @if (playlist.Value.Playlists != null)
     {
-        @foreach (var playlist in UsersPlaylist)
+        @foreach (var playlist in playlist.Value.Playlists.Distinct())
         {
-                    <div class="nav-item px-3">
+            <div class="nav-item px-3">
                 @if (playlist.Name == "Favorites")
                 {
-                            <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
-                                        <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>My favorite tracks
-                           </NavLink>
+                    <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")" @onclick="() => HandleClick(playlist.PlaylistId)" Match="NavLinkMatch.All">
+                        <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>My favorite tracks
+                    </NavLink>
                 }
                 else
                 {
-                            <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")">
-                            <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name
-                        </NavLink>
+                    <NavLink class="nav-link" href="@($"playlist/{playlist.PlaylistId}")" @onclick="() => HandleClick(playlist.PlaylistId)" Match="NavLinkMatch.All">
+                        <i class="bi bi-music-note-list me-3" style="font-size: 1.25em"></i>@playlist.Name
+                    </NavLink>
                 }
 
-                    </div>
+            </div>
         }
     }
 </nav>
 
+
+
 @code {
     [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
     private List<Playlist> UsersPlaylist;
+    @inject NavigationManager NavigationManager;
 
     private async Task<string> GetUserId()
     {
@@ -46,6 +59,13 @@
         // Assuming you have a way to fetch user's playlists
         UsersPlaylist = await PlaylistService.GetPlayListOfUsers(UserId);
 
+        dispatcher.Dispatch(new FetchDataAction(UserId));
+
         StateHasChanged();
+    }
+
+    private void HandleClick(long id)
+    {
+        NavigationManager.NavigateTo($"/playlist/{id}", true);
     }
 }

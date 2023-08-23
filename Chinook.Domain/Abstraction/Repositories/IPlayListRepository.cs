@@ -19,18 +19,19 @@ namespace Chinook.Domain.Abstraction.Repositories
 
         Task<Playlist> GetPlaylist(long id);
 
-        Task<List<Playlist>> GetPlaylists(long id);
+        Task<Playlist> AddTrackToPlaylistAsync(long trackId,long playlsitId);
 
-        Task AddTrackToPlaylistAsync(long trackId,long playlsitId);
-
-        Task AddPlaylistToUser(string UserId, string playListName,long trackId);
+        Task<Playlist> AddPlaylistToUser(string UserId, string playListName,long trackId);
 
         Task<List<Playlist>> GetUsersPlayList(string UserId);
 
         Task AddTofavorite(long trackId, string userId);
 
+        Task<Playlist> Createfavorite( string userId);
 
         Task RemoveFromfavorite(long trackId, string UserId);
+
+        Task RemoveFromPlalist(long trackId, long PlalistId);
 
         bool IsFavoriteTrack(Track Tracks, string UserId);
 

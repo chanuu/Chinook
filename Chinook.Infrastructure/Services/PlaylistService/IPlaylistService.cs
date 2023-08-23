@@ -15,7 +15,7 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         //getplaylist by ID
         Task<ClientModels.Playlist> GetPlaylistById(int id, string CurrentUserId);
 
-        Task CreatePlaylist(string playlistName, string UserId,long trackId,long playlistId);
+        Task<Playlist> CreatePlaylist(string playlistName, string UserId,long trackId,long playlistId);
 
         //get playlist by created userId
         Task<List<Playlist>> GetPlayListOfUsers(string UserId);
@@ -23,8 +23,12 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         // add track to favorite
         Task AddTofavorite(long trackId, string userId);
 
+        Task<Playlist> Createfavorite(string userId);
+
         // remove from favorite
         Task RemoveFromfavorite(long trackId, string userId);
+
+        Task RemoveFromPlaylist(long trackId, long PlalistId);
 
 
     }

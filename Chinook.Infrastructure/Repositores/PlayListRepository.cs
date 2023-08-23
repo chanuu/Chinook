@@ -28,7 +28,7 @@ namespace Chinook.Infrastructure.Repositores
             _context = context;
         }
 
-       
+
         /// <summary>
         /// Add New Playlist to the Databse 
         /// </summary>
@@ -36,7 +36,7 @@ namespace Chinook.Infrastructure.Repositores
         /// <returns></returns>
         public Playlist Add(Playlist playlist)
         {
-            var Playlist =  _context.Playlists.Add(playlist).Entity;
+            var Playlist = _context.Playlists.Add(playlist).Entity;
             UnitOfWork.SaveChangesAsync();
             return Playlist;
         }
@@ -47,7 +47,7 @@ namespace Chinook.Infrastructure.Repositores
         /// <returns></returns>
         public async Task<List<Playlist>> GetAll()
         {
-              return await _context.Playlists.Include(x => x.PlaylistId).ToListAsync(); ;
+            return await _context.Playlists.Include(x => x.PlaylistId).ToListAsync(); ;
         }
 
         /// <summary>
@@ -64,15 +64,7 @@ namespace Chinook.Infrastructure.Repositores
                 .FirstOrDefaultAsync(o => o.PlaylistId == id);
         }
 
-        public async Task<List<Playlist>> GetPlaylists(long id)
-        {
-            return await _context.Playlists
-                .Include(a => a.Tracks)
-                .ThenInclude(a => a.Album)
-                .ThenInclude(a => a.Artist)
-                .Where(o => o.PlaylistId == id)
-                .ToListAsync();
-        }
+      
 
         /// <summary>
         /// remove playlist 
@@ -80,7 +72,7 @@ namespace Chinook.Infrastructure.Repositores
         /// <param name="playlist"></param>
         public void Remove(Playlist playlist)
         {
-           _context.Playlists.Remove(playlist);
+            _context.Playlists.Remove(playlist);
         }
 
         /// <summary>
@@ -90,11 +82,11 @@ namespace Chinook.Infrastructure.Repositores
         /// <param name="playlsitId"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task AddTrackToPlaylistAsync(long trackId, long playlsitId)
+        public async Task<Playlist> AddTrackToPlaylistAsync(long trackId, long playlsitId)
         {
-           var Playlist = await _context.Playlists.Include(x => x.UserPlaylists).FirstOrDefaultAsync(o => o.PlaylistId == playlsitId);
+            var Playlist = await _context.Playlists.Include(x => x.UserPlaylists).FirstOrDefaultAsync(o => o.PlaylistId == playlsitId);
 
-           if(Playlist == null)
+            if (Playlist == null)
             {
                 throw new Exception("Cannot Find Playlist With Given Id !");
             }
@@ -102,11 +94,16 @@ namespace Chinook.Infrastructure.Repositores
             {
                 var track = await _context.Tracks
                    .FirstOrDefaultAsync(t => t.TrackId == trackId);
+                if (track == null)
+                {
+                    throw new Exception("Cannot Find Track with Given Id !");
+                }
 
                 Playlist.Tracks.Add(track);
                 await UnitOfWork.SaveChangesAsync();
-                
+
             }
+            return Playlist;
         }
 
         /// <summary>
@@ -116,15 +113,15 @@ namespace Chinook.Infrastructure.Repositores
         /// <param name="playlsitId"></param>
         /// <param name="trackId"></param>
         /// <returns></returns>
-        public async Task AddPlaylistToUser(string UserId, string playListName, long trackId)
+        public async Task<Playlist> AddPlaylistToUser(string UserId, string playListName, long trackId)
         {
             //todo : implment static create methode for object creation
             Playlist NewplayList = new Playlist();
             NewplayList.Name = playListName;
-            
+
             _context.Playlists.Add(NewplayList);
 
-            if  (NewplayList != null)
+            if (NewplayList != null)
             {
                 var track = await _context.Tracks
                     .FirstOrDefaultAsync(t => t.TrackId == trackId);
@@ -132,13 +129,19 @@ namespace Chinook.Infrastructure.Repositores
                 if (track != null)
                 {
                     NewplayList.UserPlaylists.Add(new UserPlaylist { UserId = UserId, PlaylistId = NewplayList.PlaylistId });
-                  
-                   
+
+
                     NewplayList.Tracks.Add(track);
 
                     await UnitOfWork.SaveChangesAsync();
                 }
+                else
+                {
+                    throw new Exception("Cannot Find Track with Given Id !");
+                }
             }
+
+            return NewplayList;
 
 
         }
@@ -150,10 +153,10 @@ namespace Chinook.Infrastructure.Repositores
         /// <returns></returns>
         public Task<List<Playlist>> GetUsersPlayList(string UserId)
         {
-           return _context.Playlists
-                .Where(x=>x.UserPlaylists.Any(up => up.UserId == UserId))
-                .ToListAsync();
-           
+            return _context.Playlists
+                 .Where(x => x.UserPlaylists.Any(up => up.UserId == UserId))
+                 .ToListAsync();
+
         }
 
 
@@ -163,18 +166,18 @@ namespace Chinook.Infrastructure.Repositores
         /// <param name="trackId"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task AddTofavorite(long trackId,string userId)
+        public async Task AddTofavorite(long trackId, string userId)
         {
-           
 
-            var favorite =   await _context.Playlists
-                .Include(x=>x.UserPlaylists)
-                .Where(x=>x.UserPlaylists
+
+            var favorite = await _context.Playlists
+                .Include(x => x.UserPlaylists)
+                .Where(x => x.UserPlaylists
                 .Any(up => up.UserId == userId && up.Playlist.Name == "Favorites"))
                 .ToListAsync();
 
-          
-            if (favorite == null || favorite.Count ==0)
+
+            if (favorite == null || favorite.Count == 0)
             {
                 //todo : implment static create method for playlist creations 
                 Playlist _Playlist = new Playlist();
@@ -184,11 +187,11 @@ namespace Chinook.Infrastructure.Repositores
                 _context.Playlists.Add(_Playlist);
 
 
-               var _track = await  _context.Tracks
-                    .Where(x=>x.TrackId == trackId)
-                    .FirstOrDefaultAsync();
+                var _track = await _context.Tracks
+                     .Where(x => x.TrackId == trackId)
+                     .FirstOrDefaultAsync();
 
-                if(_track !=null)
+                if (_track != null)
                 {
                     _Playlist.UserPlaylists.Add(new UserPlaylist { UserId = userId, PlaylistId = _Playlist.PlaylistId });
 
@@ -211,7 +214,7 @@ namespace Chinook.Infrastructure.Repositores
 
                 if (_track != null)
                 {
-                 
+
 
                     _Playlist.Tracks.Add(_track);
 
@@ -227,35 +230,41 @@ namespace Chinook.Infrastructure.Repositores
         public bool IsFavoriteTrack(Track Tracks, string UserId)
         {
             bool isFavorites = false;
-          
-                var favorite =  _context.Playlists
-                 .Include(x => x.Tracks)
-            
-                 .Where(x => x.UserPlaylists
-                 .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
-                 .FirstOrDefault();
 
+            var favorite = _context.Playlists
+             .Include(x => x.Tracks)
+
+             .Where(x => x.UserPlaylists
+             .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
+             .FirstOrDefault();
+
+            if(favorite != null)
+            {
                 var MatchedTrack = favorite.Tracks.Where(x => x.TrackId == Tracks.TrackId);
-                if (MatchedTrack.Count()>0){
+                if (MatchedTrack.Count() > 0)
+                {
                     isFavorites = true;
                 }
-          
+            }
+
             return isFavorites;
         }
 
         // remove track from favorite
         public async Task RemoveFromfavorite(long trackId, string UserId)
         {
-            
+
             var PlayList = await _context.Playlists
                .Include(x => x.Tracks)
                .Where(x => x.UserPlaylists
                .Any(up => up.UserId == UserId && up.Playlist.Name == "Favorites"))
                .FirstOrDefaultAsync();
+            if (PlayList == null)
+            {
+                throw new Exception("Cannot Find Playlist With Given Id !");
+            }
 
-            var track =   PlayList.Tracks.Where(x=>x.TrackId== trackId).SingleOrDefault();
-
-            
+            var track = PlayList.Tracks.Where(x => x.TrackId == trackId).SingleOrDefault();
 
             if (track != null)
             {
@@ -265,9 +274,71 @@ namespace Chinook.Infrastructure.Repositores
 
 
         }
+        //remove from playlist 
+        public async Task RemoveFromPlalist(long trackId, long PlalistId)
+        {
+            var Playlist = await _context.Playlists
+               .Include(x => x.Tracks)
+               .Where(x => x.PlaylistId == PlalistId)
+
+               .FirstOrDefaultAsync();
+
+            if (Playlist != null)
+            {
+                var track = Playlist.Tracks.Where(x => x.TrackId == trackId).SingleOrDefault();
+                if (track != null)
+                {
+                    Playlist.Tracks.Remove(track);
+
+                }
+            }
+
+            await UnitOfWork.SaveChangesAsync();
+
+
+        }
+
+        // create favorite on intial login 
+        public async Task<Playlist> Createfavorite(string userId)
+        {
+
+            var favorite = await _context.Playlists
+                .Include(x => x.UserPlaylists)
+                .Where(x => x.UserPlaylists
+                .Any(up => up.UserId == userId && up.Playlist.Name == "Favorites"))
+                .ToListAsync();
+
+
+            if (favorite == null || favorite.Count == 0)
+            {
+                //todo : implment static create method for playlist creations 
+                Playlist _Playlist = new Playlist();
+
+                _Playlist.Name = "Favorites";
+
+                _context.Playlists.Add(_Playlist);
+
+                _Playlist.UserPlaylists.Add(new UserPlaylist { UserId = userId, PlaylistId = _Playlist.PlaylistId });
+
+                await UnitOfWork.SaveChangesAsync();
+                return _Playlist;
+
+            }
+            else
+            {
+                var _Playlist = await _context.Playlists
+               .Include(x => x.UserPlaylists)
+               .Where(x => x.UserPlaylists
+               .Any(up => up.UserId == userId && up.Playlist.Name == "Favorites"))
+               .FirstOrDefaultAsync();
+                return _Playlist;
+
+            }
+
+
+        }
+
+
     }
 
-
-
-    
 }

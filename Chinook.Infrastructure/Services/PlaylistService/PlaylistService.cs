@@ -59,16 +59,16 @@ namespace Chinook.Infrastructure.Services.PlaylistService
 
 
         // create New Playlist or Assign to the Exisiting one using User Id 
-        public async Task CreatePlaylist(string playlistName, string UserId, long trackId, long playlistId)
+        public async Task<Playlist> CreatePlaylist(string playlistName, string UserId, long trackId, long playlistId)
         {
 
             if (playlistName != null)
             {
-                await _PlayListRepository.AddPlaylistToUser(UserId, playlistName, trackId);
+               return  await _PlayListRepository.AddPlaylistToUser(UserId, playlistName, trackId);
             }
             else
             {
-                await _PlayListRepository.AddTrackToPlaylistAsync(trackId, playlistId);
+               return  await _PlayListRepository.AddTrackToPlaylistAsync(trackId, playlistId);
             }
 
 
@@ -90,6 +90,16 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         public async Task RemoveFromfavorite(long trackId, string userId)
         {
             await _PlayListRepository.RemoveFromfavorite(trackId, userId);
+        }
+
+        public async Task RemoveFromPlaylist(long trackId, long PlalistId)
+        {
+            await _PlayListRepository.RemoveFromPlalist(trackId, PlalistId);
+        }
+
+        public async Task<Playlist> Createfavorite(string userId)
+        {
+          return await _PlayListRepository.Createfavorite(userId);
         }
     }
 }

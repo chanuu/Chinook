@@ -2,8 +2,14 @@
 @attribute [Authorize]
 
 @using Chinook.Infrastructure.Services.ArtistService;
+@using Chinook.Infrastructure.Services.PlaylistService;
 @using Chinook.Models
+@using Chinook.State.Actions.Playlist;
+@using Chinook.State.Playlist;
+@using Fluxor;
 @using Microsoft.EntityFrameworkCore
+@using System.Security.Claims;
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
 <PageTitle>Index</PageTitle>
 
@@ -36,15 +42,30 @@ else
 }
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState> authenticationState { get; set; }
+    private string CurrentUserId;
+    @inject IPlaylistService _PlaylistService;
     private List<Artist> Artists;
    
     @inject IArtistService ArtistService;
     private bool isLoading = true;
+    @inject IState<PlaylistState> PlaylistState
+
+    @inject IDispatcher Dispatcher
     
-   
+    private async Task<string> GetUserId()
+    {
+        var user = (await authenticationState).User;
+        var userId = user.FindFirst(u => u.Type.Contains(ClaimTypes.NameIdentifier))?.Value;
+        return userId;
+    }
+
     protected override async Task OnInitializedAsync() {
         await InvokeAsync(StateHasChanged);
         Artists =  await ArtistService.GetArtist();
+        CurrentUserId = await GetUserId();
+        var playList =  await _PlaylistService.Createfavorite(CurrentUserId);
+        Dispatcher.Dispatch(new UpdatePlaylistAction(playList, CurrentUserId));
         isLoading = false;
     }
 
@@ -58,7 +79,7 @@ else
     private async Task SearchArtistByName(string key)
     {
         isLoading = true;
-        Artists = await ArtistService.SearchArtistByArtist(key);
+        Artists = await ArtistService.SearchArtistByName(key);
         isLoading = false;
     }
 }

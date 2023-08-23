@@ -29,10 +29,7 @@ namespace Chinook.State.Reducers
         [EffectMethod]
         public async Task HandleUpdatePlaylistAction(UpdatePlaylistAction action, IDispatcher dispatcher)
         {
-            // Update your state accordingly based on the new playlist
-            // You would typically add the new playlist to the existing list of playlists.
-
-            // Example assuming you have a method in your state to update the playlist list:
+           // add newly created playlsit for the state 
             var playlsits = await playlistService.GetPlayListOfUsers(action.UserId);
             playlsits.Add(action.NewPlaylist);
             var newState = new PlaylistState(playlists: playlsits);

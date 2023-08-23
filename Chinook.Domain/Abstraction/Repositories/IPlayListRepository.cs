@@ -29,6 +29,7 @@ namespace Chinook.Domain.Abstraction.Repositories
 
         Task AddTofavorite(long trackId, string userId);
 
+        Task<Playlist> Createfavorite( string userId);
 
         Task RemoveFromfavorite(long trackId, string UserId);
 

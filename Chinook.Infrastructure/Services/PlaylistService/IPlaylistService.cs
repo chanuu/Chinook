@@ -23,6 +23,8 @@ namespace Chinook.Infrastructure.Services.PlaylistService
         // add track to favorite
         Task AddTofavorite(long trackId, string userId);
 
+        Task<Playlist> Createfavorite(string userId);
+
         // remove from favorite
         Task RemoveFromfavorite(long trackId, string userId);
 

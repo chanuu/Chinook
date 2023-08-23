@@ -96,7 +96,7 @@ else
         CurrentUserId = await GetUserId();
 
         // get artist by srtist id
-        Artist = await ArtistRepository.GetAsync(ArtistId);
+        Artist = await ArtistService.GetAsync(ArtistId);
 
         // get tracks by artist id
         Tracks = await ArtistService.GetTracksByArtist(ArtistId, CurrentUserId);

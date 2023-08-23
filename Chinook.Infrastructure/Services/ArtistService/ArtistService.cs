@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,6 +60,11 @@ namespace Chinook.Infrastructure.Services.ArtistService
         public async Task<List<Artist>> SearchArtistByArtist(string key)
         {
             return await _ArtistRepository.GetAllByNameAsync(key);
+        }
+
+        public  async Task<Artist> GetAsync(long artistId)
+        {
+          return  await _ArtistRepository.GetAsync(artistId);
         }
     }
 }
